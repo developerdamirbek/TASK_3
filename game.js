@@ -1,58 +1,8 @@
 const readline = require('readline');
-const crypto = require('crypto');
-
-class KeyGenerator {
-    static generateKey() {
-        return crypto.randomBytes(32).toString('hex');
-    }
-}
-
-class HMACGenerator {
-    static generateHMAC(key, message) {
-        const hmac = crypto.createHmac('sha256', key);
-        hmac.update(message);
-        return hmac.digest('hex');
-    }
-}
-
-class GameRules {
-    static determineWinner(userMove, computerMove, moves) {
-        const half = Math.floor(moves.length / 2);
-        if (userMove === computerMove) {
-            return "Draw";
-        } else if ((moves.indexOf(userMove) + half) % moves.length === moves.indexOf(computerMove)) {
-            return "Computer wins";
-        } else {
-            return "You win";
-        }
-    }
-}
-
-class HelpTableGenerator {
-    static generateTable(moves) {
-        const table = [["", ...moves]];
-        for (const move of moves) {
-            const row = [move];
-            for (const opponent of moves) {
-                if (moves.indexOf(move) === moves.indexOf(opponent)) {
-                    row.push("Draw");
-                } else if ((moves.indexOf(move) + 1) % moves.length === moves.indexOf(opponent)) {
-                    row.push("Win");
-                } else {
-                    row.push("Lose");
-                }
-            }
-            table.push(row);
-        }
-        return table;
-    }
-}
-
-function displayTable(table) {
-    for (const row of table) {
-        console.log(row.join('\t'));
-    }
-}
+const KeyGenerator = require('./KeyGenerator');
+const HMACGenerator = require('./HMACGenerator');
+const GameRules = require('./GameRules');
+const HelpTableGenerator = require('./HelpTableGenerator');
 
 async function main() {
     const moves = process.argv.slice(2);
@@ -89,7 +39,7 @@ async function main() {
 
     if (userMove === '?') {
         const table = HelpTableGenerator.generateTable(moves);
-        displayTable(table);
+        console.log(table);
     } else if (userMove === '0') {
         rl.close();
         return;
